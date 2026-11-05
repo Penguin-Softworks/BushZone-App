@@ -6,7 +6,7 @@ This project is still VERY early in development and likely won't see any update 
 ## Current Contributors
 **Penguin Softworks**<br>
 [PenguinVEVO](https://github.com/PenguinVEVO) — Project Lead, Lead Programmer, Lead UI/UX Designer
+[Amara Fazackerley](https://github.com/Artronoth) — Assistant UI/UX Programmer
 <br><br>
 **Outside Contributors**<br>
-[Amara Fazackerley](https://github.com/Artronoth) — Assistant UI/UX Programmer  
 [M. A. McCollum](https://github.com/mamccollum) — Backend Architect
