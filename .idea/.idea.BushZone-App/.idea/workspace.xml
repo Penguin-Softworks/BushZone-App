@@ -11,11 +11,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="df7d10df-fd64-45f7-933e-378909d71b6c" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.BushZone-App/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.BushZone-App/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scenes/ProductionScenes/SplashScreen.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/ProductionScenes/SplashScreen.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Source/Prototyping/BZApp.Prototyping.asmdef" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Source/Prototyping/BZApp.Prototyping.asmdef" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Source/Prototyping/SplashScreen/SplashScreenBehaviour.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Source/Prototyping/SplashScreen/SplashScreenBehaviour.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectSettings/ProjectSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/ProjectSettings.asset" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

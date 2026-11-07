@@ -72,7 +72,6 @@ namespace BZApp.Prototyping
                 action.action.performed += HandleFadeSkip;
             while (currentFadeCoroutine != null && !skipFade) 
                 yield return null;
-            Debug.Log("Fade done/cancelled");
             foreach (var action in fadeSkipActions)
                 action.action.performed -= HandleFadeSkip;
             if (currentFadeCoroutine != null)
@@ -107,7 +106,6 @@ namespace BZApp.Prototyping
                 timeElapsed += Time.deltaTime;
                 yield return null;
             }
-            Debug.Log("Wait done/cancelled");
             foreach (var action in fadeSkipActions)
                 action.action.performed -= HandleFadeSkip;
         }
