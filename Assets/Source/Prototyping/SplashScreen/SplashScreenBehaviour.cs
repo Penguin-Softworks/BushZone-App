@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using BZApp.GUI.Utilities;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -11,6 +12,7 @@ namespace BZApp.Prototyping
     {
         [Header("General Settings")]
         [SerializeField] private string sceneToLoad = "LoaderScene";
+        [SerializeField] private InputActionReference[] fadeSkipActions;
         
         [Header("Timing Settings")]
         [SerializeField] private float startDelayTime = 0.5f;
@@ -26,9 +28,11 @@ namespace BZApp.Prototyping
 
         // Internal variables
         private enum FadeType { FadeIn, FadeOut }
+        private bool skipFade = false;
         
         // Internal references
         private AsyncOperation asyncLevelLoad;
+        private Coroutine currentFadeCoroutine;
 
         private void Start() => StartCoroutine(StartBehaviour());
 
@@ -37,26 +41,44 @@ namespace BZApp.Prototyping
             // Initial loading stage
             yield return new WaitForSeconds(startDelayTime);
             asyncLevelLoad = SceneManager.LoadSceneAsync(sceneToLoad);
+            if (asyncLevelLoad == null) yield break;
             asyncLevelLoad.allowSceneActivation = false;
             while (asyncLevelLoad.progress < 0.9f)
                 yield return null;
             
             // Initial splash fade out
             Image[] bzAppSplashImages = initialSplashGroup.GetComponentsInChildren<Image>();
-            yield return StartCoroutine(FadeSplashImages(bzAppSplashImages, FadeType.FadeOut, initialSplashFadeTime));
+            yield return FadeSplashImages(bzAppSplashImages, FadeType.FadeOut, initialSplashFadeTime);
             initialSplashGroup.SetActive(false);
             
             // Teams logos fade in/out stage
             yield return new WaitForSeconds(initialSplashWaitAfterFadeTime);
             teamsLogosSplashGroup.SetActive(true);
             Image[] teamsLogosSplashImages = teamsLogosSplashGroup.GetComponentsInChildren<Image>();
-            yield return StartCoroutine(FadeSplashImages(teamsLogosSplashImages, FadeType.FadeIn, logosFadeTime));
-            yield return new WaitForSeconds(logosHoldTime);
-            yield return StartCoroutine(FadeSplashImages(teamsLogosSplashImages, FadeType.FadeOut, logosFadeTime));
+            yield return StartCancellableFade(teamsLogosSplashImages, FadeType.FadeIn, logosFadeTime);
+            if (!skipFade) yield return StartCancellableWait(logosHoldTime);
+            yield return FadeSplashImages(teamsLogosSplashImages, FadeType.FadeOut, logosFadeTime);
             yield return new WaitForSeconds(logosWaitAfterFadeTime);
             teamsLogosSplashGroup.SetActive(false);
             
             asyncLevelLoad.allowSceneActivation = true;
+        }
+
+        private IEnumerator StartCancellableFade(IReadOnlyList<Image> splashImages, FadeType fadeType, float fadeTime)
+        {
+            skipFade = false;
+            currentFadeCoroutine = StartCoroutine(FadeSplashImages(splashImages, fadeType, fadeTime));
+            foreach (var action in fadeSkipActions)
+                action.action.performed += HandleFadeSkip;
+            while (currentFadeCoroutine != null && !skipFade) 
+                yield return null;
+            Debug.Log("Fade done/cancelled");
+            foreach (var action in fadeSkipActions)
+                action.action.performed -= HandleFadeSkip;
+            if (currentFadeCoroutine != null)
+                StopCoroutine(currentFadeCoroutine);
+            foreach (Image img in splashImages)
+                img.color = fadeType == FadeType.FadeIn ? Color.white : ExtColour.ClearWhite;
         }
 
         private IEnumerator FadeSplashImages(IReadOnlyList<Image> splashImages, FadeType fadeType, float fadeTime)
@@ -67,10 +89,33 @@ namespace BZApp.Prototyping
             while (timeElapsed < fadeTime)
             {
                 timeElapsed += Time.deltaTime;
-                foreach (Image bzAppSplashImage in splashImages)
-                    bzAppSplashImage.color = Color.Lerp(startingColour, endingColour, timeElapsed / fadeTime);
+                foreach (Image img in splashImages)
+                    img.color = Color.Lerp(startingColour, endingColour, timeElapsed / fadeTime);
                 yield return null;
             }
+            currentFadeCoroutine = null;
+        }
+
+        private IEnumerator StartCancellableWait(float waitTime)
+        {
+            skipFade = false;
+            foreach (var action in fadeSkipActions)
+                action.action.performed += HandleFadeSkip;
+            float timeElapsed = 0;
+            while (!skipFade && timeElapsed < waitTime)
+            {
+                timeElapsed += Time.deltaTime;
+                yield return null;
+            }
+            Debug.Log("Wait done/cancelled");
+            foreach (var action in fadeSkipActions)
+                action.action.performed -= HandleFadeSkip;
+        }
+
+        private void HandleFadeSkip(InputAction.CallbackContext context)
+        {
+            if (!context.performed) return;
+            skipFade = true;
         }
     }
 }

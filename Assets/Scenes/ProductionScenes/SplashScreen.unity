@@ -332,6 +332,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneToLoad: LoaderScene
+  fadeSkipActions:
+  - {fileID: 5127763454802784806, guid: adb5aec74dde06b408686707a3228cd8, type: 3}
+  - {fileID: 1129932835015463587, guid: adb5aec74dde06b408686707a3228cd8, type: 3}
   startDelayTime: 0.5
   initialSplashFadeTime: 0.3
   initialSplashWaitAfterFadeTime: 0.3
